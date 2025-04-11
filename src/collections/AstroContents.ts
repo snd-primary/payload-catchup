@@ -5,6 +5,7 @@ export const AstroContents: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['title', 'category', 'publishedDate', 'status'],
+    group: 'Astroサイト',
   },
   access: {
     read: () => true,
@@ -23,76 +24,113 @@ export const AstroContents: CollectionConfig = {
       label: 'スラッグ',
       admin: {
         description: 'URLに使用される識別子（例：my-first-post）',
+        position: 'sidebar',
+      },
+      hooks: {
+        beforeValidate: [
+          ({ value, data }) => {
+            // タイトルからスラッグを自動生成（値がない場合）
+            if (!value && data.title) {
+              return data.title
+                .toLowerCase()
+                .replace(/[^\w\s]/g, '')
+                .replace(/\s+/g, '-');
+            }
+            return value;
+          },
+        ],
       },
     },
     {
-      name: 'category',
-      type: 'select',
-      required: true,
-      label: 'カテゴリー',
-      options: [
+      type: 'tabs',
+      tabs: [
         {
-          label: 'ニュース',
-          value: 'news',
+          label: '基本情報',
+          fields: [
+            {
+              name: 'category',
+              type: 'select',
+              required: true,
+              label: 'カテゴリー',
+              options: [
+                {
+                  label: 'ニュース',
+                  value: 'news',
+                },
+                {
+                  label: 'ブログ',
+                  value: 'blog',
+                },
+                {
+                  label: '製品情報',
+                  value: 'products',
+                },
+              ],
+              admin: {
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'publishedDate',
+              type: 'date',
+              required: true,
+              label: '公開日',
+              admin: {
+                date: {
+                  pickerAppearance: 'dayAndTime',
+                },
+                position: 'sidebar',
+              },
+            },
+            {
+              name: 'featuredImage',
+              type: 'upload',
+              label: 'アイキャッチ画像',
+              relationTo: 'media',
+            },
+            {
+              name: 'content',
+              type: 'richText',
+              label: '本文',
+              required: true,
+            },
+          ],
         },
         {
-          label: 'ブログ',
-          value: 'blog',
-        },
-        {
-          label: '製品情報',
-          value: 'products',
-        },
-      ],
-    },
-    {
-      name: 'publishedDate',
-      type: 'date',
-      required: true,
-      label: '公開日',
-      admin: {
-        date: {
-          pickerAppearance: 'dayAndTime',
-        },
-      },
-    },
-    {
-      name: 'featuredImage',
-      type: 'upload',
-      label: 'アイキャッチ画像',
-      relationTo: 'media',
-    },
-    {
-      name: 'content',
-      type: 'richText',
-      label: '本文',
-      required: true,
-    },
-    {
-      name: 'excerpt',
-      type: 'textarea',
-      label: '抜粋',
-      admin: {
-        description: '記事の短い説明（検索結果やリスト表示で使用）',
-      },
-    },
-    {
-      name: 'metaDescription',
-      type: 'textarea',
-      label: 'MEタディスクリプション',
-      admin: {
-        description: 'SEO用の説明文',
-      },
-    },
-    {
-      name: 'tags',
-      type: 'array',
-      label: 'タグ',
-      fields: [
-        {
-          name: 'tag',
-          type: 'text',
-          required: true,
+          label: 'SEO情報',
+          fields: [
+            {
+              name: 'excerpt',
+              type: 'textarea',
+              label: '抜粋',
+              admin: {
+                description: '記事の短い説明（検索結果やリスト表示で使用）',
+              },
+            },
+            {
+              name: 'metaDescription',
+              type: 'textarea',
+              label: 'MEタディスクリプション',
+              admin: {
+                description: 'SEO用の説明文',
+              },
+            },
+            {
+              name: 'tags',
+              type: 'array',
+              label: 'タグ',
+              admin: {
+                description: '記事に関連するキーワード',
+              },
+              fields: [
+                {
+                  name: 'tag',
+                  type: 'text',
+                  required: true,
+                },
+              ],
+            },
+          ],
         },
       ],
     },
@@ -112,6 +150,9 @@ export const AstroContents: CollectionConfig = {
           value: 'published',
         },
       ],
+      admin: {
+        position: 'sidebar',
+      },
     },
   ],
 };
