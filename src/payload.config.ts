@@ -20,6 +20,28 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    // カスタムダッシュボードを設定
+    components: {
+      // ダッシュボードの上部にカスタムコンポーネントを追加
+      beforeDashboard: [
+        // コンポーネントのパスを指定（このファイルはまだ作成していません）
+        path.resolve(__dirname, './components/AstroDashboard.tsx'),
+      ],
+    },
+    // メニューのグループ化
+    nav: {
+      // カスタムグループ
+      'Astroサイト': [
+        'astro-contents',
+      ],
+      // デフォルトグループ
+      'CMS': [
+        'media',
+      ],
+      'Admin': [
+        'users',
+      ],
+    },
   },
   collections: [Users, Media, AstroContents],
   editor: lexicalEditor(),
